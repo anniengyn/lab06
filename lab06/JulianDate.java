@@ -49,7 +49,13 @@ public class JulianDate {
 
         System.out.printf("\nYour Julian date is : " + jd.calculateJD() + ".");
         System.out.printf("\nYou were born on a beautiful %s.", jd.weekday());
+        if(t.get(Calendar.DAY_OF_MONTH) == c.get(Calendar.DAY_OF_MONTH) && t.get(Calendar.MONTH)+1 == c.get(Calendar.MONTH)+1){
+            System.out.printf("\nHappy Birthday! It seems like you survived another year.");
+        }
         System.out.printf("\nAnd guess what... you are %d days old. :)", (today.calculateJD() - jd.calculateJD()));
+        if( (today.calculateJD() - jd.calculateJD())%100 == 0){
+            System.out.printf("\nOh by the way it seems like today is a special day, since your number of lived days is divisible by 100.");
+        }
         
     }
 
