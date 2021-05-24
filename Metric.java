@@ -9,6 +9,8 @@ public class Metric {
 	public static void main(String[] args) {
 		// Testing
 		System.out.println(convertJulianToMetric(2450502));
+		//System.out.println(convertJulianToMetric(2451149));
+
 		System.out.printf("Metric to Julian: %d", convertMetricToJulian(day, month, year));
 	}
 

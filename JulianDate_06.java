@@ -56,7 +56,6 @@ public class JulianDate_06 {
 
 		System.out.printf("\nMetric-Date: %d.", Metric.convertJulianToMetric(jd.calculateJD()));
 
-
 	}
 
 	/*
@@ -65,7 +64,7 @@ public class JulianDate_06 {
 
 	public int calculateJD() {
 		return (1461 * (year + 4800 + (month - 14) / 12)) / 4 + (367 * (month - 2 - 12 * ((month - 14) / 12))) / 12
-				- (3 * ((year + 4900 + (year - 14) / 12) / 100)) / 4 + day - 32075;
+				- (3 * ((year + 4900 + (year - 14) / 12) / 100)) / 4 + day - 32075 + 1;
 	}
 
 	/*
@@ -73,7 +72,7 @@ public class JulianDate_06 {
 	 */// https://java.meritcampus.com/core-java-questions/Print-week-days-using-switch-statement
 
 	public String weekday() {
-		int w = (julianDate % 7) + 2;
+		int w = (julianDate % 7) + 1;
 		switch (w) {
 		case 1:
 			return "Monday";
