@@ -6,131 +6,84 @@ import java.util.Calendar;
 import java.util.Scanner;
 
 /*
- * author: Dai Fischer & Anh Nguyen Huong
+ * author: Anh Nguyen Huong 17/05/2021
  */
 
 public class JulianDate_06 {
 
-	static int year;
-	static int month;
-	static int day;
-	String julianDate;
+    int year;
+	int month;
+	int day;
+	int julianDate;
+	int century;
 
-	public void JulianDate(Calendar c) {
+
+	
+	public void JulianDate (Calendar c) {
 		year = c.get(Calendar.YEAR);
-		month = c.get(Calendar.MONTH);
+		month = c.get(Calendar.MONTH)+1;
 		day = c.get(Calendar.DAY_OF_MONTH);
-		julianDate = calculateJD(c);
+		century = Integer.parseInt(Integer.toString(year).substring(0, 2));
+		julianDate = calculateJD();
 	}
 
-	public static void main(String[] args) throws ParseException {
-		System.out.println("Please enter your birthday (dd.mm.yyyy):");
-		Scanner s = new Scanner(System.in);
-		String input = s.nextLine();
 
-		Calendar cal = Calendar.getInstance();
-		cal.setTime(new SimpleDateFormat("dd.MM.yyyy").parse(input));
+    public static void main(String[] args) {
+    	
+        System.out.println("Please enter your birthday (dd.mm.yyyy):");
+        Scanner s = new Scanner(System.in);
+        String input = s.nextLine();
+        
+        Calendar c = Calendar.getInstance();
+        Calendar t = Calendar.getInstance();
+        
+        // https://docs.oracle.com/en/java/javase/11/docs/api/java.base/java/text/SimpleDateFormat.html
+        try {
+            c.setTime(new SimpleDateFormat("dd.MM.yyyy").parse(input));
+        } catch (ParseException e1) {
+            System.out.println("Please try again.");
+        }
 
-		System.out.println(calculateJD(cal));
-		System.out.println(dayOfYear(cal) + " Day Of Year");
+        JulianDate jd = new JulianDate(c);
+        JulianDate today = new JulianDate(t);
 
-	}
+        System.out.printf("\nYour Julian date is : " + jd.calculateJD() + ".");
+        System.out.printf("\nYou were born on a beautiful %s.", jd.weekday());
+        if(t.get(Calendar.DAY_OF_MONTH) == c.get(Calendar.DAY_OF_MONTH) && t.get(Calendar.MONTH)+1 == c.get(Calendar.MONTH)+1){
+            System.out.printf("\nHappy Birthday! It seems like you survived another year.");
+        }
+        System.out.printf("\nAnd guess what... you are %d days old. :)", (today.calculateJD() - jd.calculateJD()));
+        if( (today.calculateJD() - jd.calculateJD())%100 == 0){
+            System.out.printf("\nOh by the way it seems like today is a special day, since your number of lived days is divisible by 100.");
+        }
+        
+    }
 
-	// format (cyyddd) Source:
-	// https://docs.oracle.com/cd/E26228_01/doc.93/e21961/julian_date_conv.htm#WEAWX261
-	private static String calculateJD(Calendar c) {
 
-		// century from 1900 - 2099
-		String jd = new String();
-		String i = new String();
-		String y = new String();
-		String d = new String();
-		if (c.get(Calendar.YEAR) >= 2000) {
-			i = "1";
-		} else {
-			i = "0";
-		}
-		// year
-		if (c.get(Calendar.YEAR) >= 2000) {
-			int k = c.get(Calendar.YEAR) - 2000;
-			if (k < 10) {
-				y = "0" + String.valueOf(k);
-			} else {
-				y = String.valueOf(k);
-			}
-		} else {
-			int l = c.get(Calendar.YEAR) - 1900;
-			if (l < 10) {
-				y = "0" + String.valueOf(l);
-			} else {
-				y = String.valueOf(l);
-			}
-		}
-		// days
-		d = String.valueOf(dayOfYear(c));
+    
+    // https://www.hermetic.ch/cal_stud/jdn.htm
+    private int calculateJD(){
+        return ( 1461 * ( year + 4800 + ( month - 14 ) / 12 )) / 4 +
+               ( 367 * ( month - 2 - 12 * (( month - 14 ) / 12 ))) / 12 -
+               ( 3 * (( year + 4900 + ( year - 14 ) / 12 ) / 100 )) / 4 + day - 32075 +1; // +1 because we start with the day so the number will be XXXX.5 rounded down, which would be wrong
+    }
+    
+    // https://java.meritcampus.com/core-java-questions/Print-week-days-using-switch-statement
+    
+    public String weekday(){
+        int  wDay = (int) ((day + (2.6*month - 0.2) - 2*century + year + (year/4) + (century/4))%7);
+        switch (wDay){
+            case 1: return "Sunday";
+            case 2: return "Monday";
+            case 3: return "Tuesday";
+            case 4: return "Wednesday";
+            case 5: return "Thursday";
+            case 6: return "Friday";
+            case 7: return "Saturday";
+            default: return "nice day";
+        }
+    }
+    
 
-		// add 0 if days of year < 100 to keep format
-		if (dayOfYear(c) < 100) {
-			d = "0" + d;
-		}
-		jd = i + y + d;
-		return jd;
-
-	}
-
-	public static int dayOfYear(Calendar c) {
-		int month = c.get(Calendar.MONTH);
-		int year = c.get(Calendar.YEAR);
-		int day = c.get(Calendar.DAY_OF_MONTH);
-
-		int sum = 0;
-		for (int i = 1; i < month; i++) {
-			if (thirtyoneDays(i)) {
-				sum = sum + 31;
-
-			} else {
-				sum = sum + 30;
-
-			}
-			if (specialFeb(i)) {
-				sum = sum - 2;
-			}
-			if (schaltjahr(year)) {
-				sum = sum + 1;
-			}
-		}
-		sum = sum + day;
-		return sum;
-	}
-
-	public static boolean thirtyoneDays(int a) {
-
-		if (a == 2 || a == 4 || a == 6 || a == 9 || a == 11) {
-			return false;
-		}
-		return true;
-	}
-
-	public static boolean specialFeb(int a) {
-		if (a != 2) {
-			return false;
-		}
-		return true;
-	}
-
-	public static boolean schaltjahr(int a) {
-		// 1. Ein Jahr ist ein Schaltjahr, wenn es restlos durch 4 teilbar ist.
-		if (a % 4 != 0) {
-			return false;
-			// 2. Falls sich die Jahrzahl durch 100 restlos teilen lässt, ist es kein
-			// Schaltjahr.
-			// 3. Falls auch eine Teilung durch 400 ganzzahlig möglich ist, dann ist es ein
-			// Schaltjahr.
-		}
-		if (a % 100 == 0 && a % 400 != 0) {
-			return false;
-		}
-		return true;
-	}
-
+    
 }
