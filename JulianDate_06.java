@@ -11,10 +11,10 @@ import java.util.Scanner;
 
 public class JulianDate_06 {
 
-	static int year;
-	static int month;
-	static int day;
-	static int julianDate;
+	int year;
+	int month;
+	int day;
+	int julianDate;
 
 	public JulianDate_06(Calendar c) {
 		year = c.get(Calendar.YEAR);
